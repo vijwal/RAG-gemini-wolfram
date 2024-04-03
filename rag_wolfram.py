@@ -66,8 +66,8 @@ embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_a
 vector_index = Chroma.from_texts(texts, embeddings).as_retriever(search_kwargs={"k": 10})
 model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=GOOGLE_API_KEY,temperature=0.2,convert_system_message_to_human=True)
 
-template = """You are an assistant for question-answering tasks. Use the following pieces of retrieved background context to answer the question as Detailedly as possible. If the answer is not in
-    provided context just say, "answer is not available" and if the answer is math related and you dont know the answer just say "Wolfram"\n\n
+template = """You are an assistant for question-answering tasks. Use the following pieces of retrieved background context to answer the question as Detailedly as possible. If the answer is not in the 
+    provided context or data just say, "answer is not available" and if the answer is math related and you dont know the answer just say "Wolfram"\n\n
 {context}
 Question: {question}
 Helpful Answer:"""
@@ -90,7 +90,8 @@ client = wolframalpha.Client(app_id)
 if st.button("Submit"):
         with st.spinner("Processing..."):
             result = qa_chain({"query": question})
-            if result["result"]=="wolfram" or "Wolfram":
+            st.write(result["result"])
+            if result["result"] == "wolfram" or result["result"]== "Wolfram":
                 res = client.query(question)
                 answer = next(res.results).text 
                 st.write("Reply from Wolfram",answer)
