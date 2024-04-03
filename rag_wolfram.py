@@ -24,7 +24,7 @@ from langchain.vectorstores import FAISS
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains.question_answering import load_qa_chain
 from dotenv import load_dotenv
-GOOGLE_API_KEY="AIzaSyD-8SRv-pnoFz9zqMzYIiaDYWaw52qAXvk"
+GOOGLE_API_KEY=""
 genai.configure(api_key=GOOGLE_API_KEY)
 
 st.set_page_config("Gemini")
@@ -82,7 +82,7 @@ qa_chain = RetrievalQA.from_chain_type(
 question = st.text_input("Ask a Question")
 
 import wolframalpha 
-app_id = "927UG2-4HTKGJXA65"
+app_id = ""
 client = wolframalpha.Client(app_id) 
   
 
