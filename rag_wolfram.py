@@ -90,7 +90,7 @@ f_url=url.format(urllib.parse.quote(question, safe=''))
 if st.button("Submit"):
         with st.spinner("Processing..."):
             result = qa_chain({"query": question})
-            st.write(result["result"])
+            # st.write(result["result"])
             if result["result"] == "wolfram" or result["result"]== "Wolfram" or on:
                 response = requests.get(f_url)
                 if response.status_code == 200:
