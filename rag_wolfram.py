@@ -83,7 +83,7 @@ on = st.toggle('Switch to Wolfram Alpha')
 
 import requests
 import xml.etree.ElementTree as ET
-url="https://api.wolframalpha.com/v2/query?input={}&format=image,plaintext&output=XML&appid=927UG2-UKELWLKTPE"
+url="url="https://api.wolframalpha.com/v1/query?input={}&format=plaintext&output=XML&appid=927UG2-UKELWLKTPE""
 f_url=url.format(question)
 
 
