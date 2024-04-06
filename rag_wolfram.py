@@ -80,12 +80,12 @@ import wolframalpha
 client = wolframalpha.Client(app_id) 
 
 on = st.toggle('Switch to Wolfram Alpha')
-
 import requests
 import xml.etree.ElementTree as ET
-url="url="https://api.wolframalpha.com/v1/query?input={}&format=plaintext&output=XML&appid=927UG2-UKELWLKTPE""
-f_url=url.format(question)
+url="https://api.wolframalpha.com/v1/query?input={}&format=image,plaintext&output=XML&appid=927UG2-4HTKGJXA65"
+import urllib.parse
 
+f_url=url.format(urllib.parse.quote(question, safe=''))
 
 if st.button("Submit"):
         with st.spinner("Processing..."):
@@ -95,11 +95,18 @@ if st.button("Submit"):
                 response = requests.get(f_url)
                 if response.status_code == 200:
                     root = ET.fromstring(response.content)
-                    for plaintext in root.findall(".//plaintext"):
-                        st.write("Reply from Wolfram",plaintext.text)
-                else:
-                    print("Error:", response.status_code)
+                    for pod in root.findall(".//pod"):
+                        title = pod.attrib.get('title', '')
+                        st.write(title)
+                        for subpod in pod.findall(".//subpod"):
+                            img = subpod.find(".//img")
+                            if img is not None:
+                                img_url = img.attrib.get('src', '')
+                                st.image(img_url)
+                            plaintext = subpod.find(".//plaintext")
+                            if plaintext is not None:
+                                st.write(" -", plaintext.text)
+                            else:
+                                st.write("Error:", response.status_code)
             elif on == False:
                 st.write("Reply: ", Markdown(result["result"]))
-                
-            
