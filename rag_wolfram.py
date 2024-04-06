@@ -1,19 +1,13 @@
 import streamlit as st
 import os
-import urllib
-import warnings
 import google.generativeai as genai
 from pathlib import Path as p
-from pprint import pprint
 import PyPDF2
 from PyPDF2 import PdfReader
 import pandas as pd
 from IPython.display import display, Markdown
-import textwrap
 import re
-
 from langchain import PromptTemplate
-from langchain.document_loaders import PyPDFLoader, UnstructuredPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
@@ -24,7 +18,8 @@ from langchain.vectorstores import FAISS
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains.question_answering import load_qa_chain
 from dotenv import load_dotenv
-GOOGLE_API_KEY=""
+
+GOOGLE_API_KEY="AIzaSyD-8SRv-pnoFz9zqMzYIiaDYWaw52qAXvk"
 genai.configure(api_key=GOOGLE_API_KEY)
 
 st.set_page_config("Gemini")
@@ -82,20 +77,29 @@ qa_chain = RetrievalQA.from_chain_type(
 question = st.text_input("Ask a Question")
 
 import wolframalpha 
-app_id = ""
 client = wolframalpha.Client(app_id) 
-  
+
+on = st.toggle('Switch to Wolfram Alpha')
+
+import requests
+import xml.etree.ElementTree as ET
+url="https://api.wolframalpha.com/v2/query?input={}&format=image,plaintext&output=XML&appid=927UG2-UKELWLKTPE"
+f_url=url.format(question)
 
 
 if st.button("Submit"):
         with st.spinner("Processing..."):
             result = qa_chain({"query": question})
             st.write(result["result"])
-            if result["result"] == "wolfram" or result["result"]== "Wolfram":
-                res = client.query(question)
-                answer = next(res.results).text 
-                st.write("Reply from Wolfram",answer)
-            else:
+            if result["result"] == "wolfram" or result["result"]== "Wolfram" or on:
+                response = requests.get(f_url)
+                if response.status_code == 200:
+                    root = ET.fromstring(response.content)
+                    for plaintext in root.findall(".//plaintext"):
+                        st.write("Reply from Wolfram",plaintext.text)
+                else:
+                    print("Error:", response.status_code)
+            elif on == False:
                 st.write("Reply: ", Markdown(result["result"]))
                 
             
